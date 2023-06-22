@@ -6,33 +6,37 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cibertec.entity.Categoria;
-import com.cibertec.repository.CategoriaRepository;
+import com.cibertec.entity.CuentaBancaria;
+import com.cibertec.repository.CuentaBancariaRepository;
 
 @Service
-public class CategoriaServiceImpl implements CategoriaService {
+public class CuentaBancariaServiceImpl implements CuentaBancariaService {
 
 	@Autowired
-	private CategoriaRepository repository;
+	private CuentaBancariaRepository repository;
 
 	@Override
-	public List<Categoria> listaCategoria() {
+	public List<CuentaBancaria> listaCuentaBancarias() {
 		return repository.findAll();
 	}
 
 	@Override
-	public Categoria insertaCategoria(Categoria obj) {
+	public CuentaBancaria insertaCuentaBancaria(CuentaBancaria obj) {
 		return repository.save(obj);
 	}
 
 	@Override
-	public Optional<Categoria> buscaCategoria(int idCategoria) {
-		return repository.findById(idCategoria);
+	public List<CuentaBancaria> buscaCuentasBancariasXUser(Integer userId) {
+	    return repository.findByUserid(userId);
+	}
+	
+	@Override
+	public Optional<CuentaBancaria> buscaCuentaBancariaXId(Integer id_cuentaBancaria) {
+	    return repository.findById(id_cuentaBancaria);
 	}
 
 	@Override
-	public void eliminaCategoria(int idCategoria) {
-		repository.deleteById(idCategoria);
+	public Optional<CuentaBancaria> buscaCuentaBancariaXNumero(String numeroCuenta) {
+	    return repository.findByNumeroCuenta(numeroCuenta);
 	}
-
 }

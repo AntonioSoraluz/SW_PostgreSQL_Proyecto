@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,59 +16,82 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cibertec.entity.Categoria;
-import com.cibertec.service.CategoriaService;
+import com.cibertec.entity.CuentaBancaria;
+import com.cibertec.entity.ErrorMessage;
+import com.cibertec.service.CuentaBancariaService;
 
 @RestController
-@RequestMapping("/rest/categoria")
-public class CategoriaController {
+@RequestMapping("/rest/cuentaBancaria")
+public class CuentaBancariaController {
 
 	@Autowired
-	private CategoriaService service;
+	private CuentaBancariaService service;
 
 	@GetMapping()
 	public ResponseEntity<?> lista() {
-		List<Categoria> lstSalida = service.listaCategoria();
+		List<CuentaBancaria> lstSalida = service.listaCuentaBancarias();
 		return ResponseEntity.ok(lstSalida);
 	}
 
 	@PostMapping
-	public ResponseEntity<?> inserta(@RequestBody Categoria obj) {
-		Categoria objSalida = service.insertaCategoria(obj);
+	public ResponseEntity<?> inserta(@RequestBody CuentaBancaria obj) {
+		CuentaBancaria objSalida = service.insertaCuentaBancaria(obj);
 		return ResponseEntity.ok(objSalida);
 	}
-
+	
+	@GetMapping("/porUser/{id}")
+	public ResponseEntity<?> listaPorUserEnPath(@PathVariable Integer id) {
+	    List<CuentaBancaria> cuentasBancarias = service.buscaCuentasBancariasXUser(id);
+	    if (!cuentasBancarias.isEmpty()) {
+	        return ResponseEntity.ok(cuentasBancarias);
+	    } else {
+	        String errorMessage = "No se registró ninguna cuenta bancaria.";
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                .body(new ErrorMessage(errorMessage));
+	    }
+	}
+	
 	@GetMapping("/porId/{id}")
 	public ResponseEntity<?> listaPorIdEnPath(@PathVariable Integer id) {
-		Optional<Categoria> optSalida = service.buscaCategoria(id);
-		return ResponseEntity.ok(optSalida.get());
+	    Optional<CuentaBancaria> optSalida = service.buscaCuentaBancariaXId(id);
+	    if (optSalida.isPresent()) {
+	        return ResponseEntity.ok(optSalida.get());
+	    } else {
+	        String errorMessage = "No se registró ninguna cuenta bancaria.";
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                .body(new ErrorMessage(errorMessage));
+	    }
+	}
+	
+	@GetMapping("/porNumero/{id}")
+	public ResponseEntity<?> listaPorNumeroEnPath(@PathVariable String id) {
+	    Optional<CuentaBancaria> optSalida = service.buscaCuentaBancariaXNumero(id);
+	    if (optSalida.isPresent()) {
+	        return ResponseEntity.ok(optSalida.get());
+	    } else {
+	        String errorMessage = "No se registró ninguna cuenta bancaria.";
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                .body(new ErrorMessage(errorMessage));
+	    }
 	}
 
-	@GetMapping("/porId")
+
+	/*@GetMapping("/porId")
 	public ResponseEntity<?> listaPorIdEnParamaterer(
 			@RequestParam(name = "id", defaultValue = "0", required = true) Integer id) {
-		Optional<Categoria> optSalida = service.buscaCategoria(id);
+		Optional<CuentaBancaria> optSalida = service.buscaCuentaBancaria(id);
 		return ResponseEntity.ok(optSalida.get());
-	}
+	}*/
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> eliminaCategoria(@PathVariable Integer id) {
-		service.eliminaCategoria(id);
-		Optional<Categoria> optCategoria = service.buscaCategoria(id);
-		if (optCategoria.isEmpty()) {
-			return ResponseEntity.ok("Eliminación exitosa");
-		}
-		return ResponseEntity.ok("No existe el id " + id);
-	}
 
 	@PutMapping
-	public ResponseEntity<?> actualiza(@RequestBody Categoria obj) {
-		Optional<Categoria> optCategoria = service.buscaCategoria(obj.getIdCategoria());
-		if (optCategoria.isPresent()) {
-			Categoria objSalida = service.insertaCategoria(obj);
+	public ResponseEntity<?> actualiza(@RequestBody CuentaBancaria obj) {
+		Optional<CuentaBancaria> optCuentaBancaria = service.buscaCuentaBancariaXId(obj.getId_cuentaBancaria());
+		if (optCuentaBancaria.isPresent()) {
+			CuentaBancaria objSalida = service.insertaCuentaBancaria(obj);
 			return ResponseEntity.ok(objSalida);
 		} else {
-			return ResponseEntity.ok("El Categoria no existe");
+			return ResponseEntity.ok("La Cuenta Bancaria no existe");
 		}
 	}
 }

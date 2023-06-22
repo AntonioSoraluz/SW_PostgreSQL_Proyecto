@@ -3,16 +3,18 @@ package com.cibertec.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.cibertec.entity.Categoria;
+import com.cibertec.entity.CuentaBancaria;
 
-public interface CategoriaService {
+public interface CuentaBancariaService {
 
-	public List<Categoria> listaCategoria();
+	public List<CuentaBancaria> listaCuentaBancarias();
 
-	public Categoria insertaCategoria(Categoria obj);
+	public CuentaBancaria insertaCuentaBancaria(CuentaBancaria obj);
 
-	public Optional<Categoria> buscaCategoria(int idCategoria);
-
-	public void eliminaCategoria(int idCategoria);
+	public List<CuentaBancaria> buscaCuentasBancariasXUser(Integer userid);
+	
+	public Optional<CuentaBancaria> buscaCuentaBancariaXId(Integer id_cuentaBancaria);
+	
+	public Optional<CuentaBancaria> buscaCuentaBancariaXNumero(String numeroCuenta);
 
 }
